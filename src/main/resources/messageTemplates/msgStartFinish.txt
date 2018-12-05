@@ -1,0 +1,4 @@
+*ACTION:* %s
+*PROJECT NAME:* %s
+*TRIGGERED BY:* %s
+*PIPELINE URL:* %s
