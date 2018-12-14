@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 import com.allexey991.slack.dictionary.DictActionType;
+import com.allexey991.slack.util.TemplateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ public class SlackService {
   DictErrorCode dictErrorCode;
   @Autowired
   MessageFactory messageFactory;
+  @Autowired
+  TemplateHelper templateHelper;
 
   private RestTemplate restTemplate;
 
@@ -60,11 +63,9 @@ public class SlackService {
 
     log.info("sendToSlack: Start form message to Slack");
 
-    String textMessage = messageFactory.getMessageTemplate(messageForSlack.getActionType());
+    String textMessage = messageFactory.getMessageTemplate(messageForSlack.getTemplate());
     if (Objects.nonNull(textMessage)){
-      String.format(textMessage
-          ,dictActionType.getValue(messageForSlack.getActionType())
-          ,messageForSlack.getAllParameters());
+      textMessage = templateHelper.replace(textMessage,messageForSlack);
 
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_JSON);

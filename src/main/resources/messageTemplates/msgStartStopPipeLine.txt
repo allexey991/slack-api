@@ -1,0 +1,6 @@
+==============
+*ACTION:* %actionType%
+*PROJECT NAME:* %ciProjectName%
+*RELEASE* %ciReleaseVersion%
+*TRIGGERED BY:* %ciPipeLineSource%
+*PIPELINE URL:* %ciPipeLineUrl%

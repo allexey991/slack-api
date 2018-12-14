@@ -7,7 +7,9 @@ import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MessageFactory {
   private static Logger log = LoggerFactory.getLogger(MessageFactory.class);
 
@@ -15,7 +17,7 @@ public class MessageFactory {
     switch(type){
     case 1:try{
                 File resource =
-                    new ClassPathResource("messageTemplates/msgStartFinish.txt").getFile();
+                    new ClassPathResource("messageTemplates/msgStartStopPipeLine.txt").getFile();
                 return new String(Files.readAllBytes(resource.toPath()));
               }catch (IOException ex){
                 log.error("MessageFactory: IOException with type=[{}]",type,ex);
@@ -23,20 +25,28 @@ public class MessageFactory {
               }
     case 2:try{
                 File resource =
-                    new ClassPathResource("messageTemplates/notificationReleaseBuild.txt").getFile();
+                    new ClassPathResource("messageTemplates/msgStartStopJob.txt").getFile();
                 return new String(Files.readAllBytes(resource.toPath()));
               }catch (IOException ex){
                 log.error("MessageFactory: IOException with type=[{}]",type,ex);
                 return null;
               }
     case 3:try{
-      File resource =
-          new ClassPathResource("messageTemplates/notificationCreateRelease.txt").getFile();
-      return new String(Files.readAllBytes(resource.toPath()));
-    }catch (IOException ex){
-      log.error("MessageFactory: IOException with type=[{}]",type,ex);
-      return null;
-    }
+              File resource =
+                  new ClassPathResource("messageTemplates/notificationCreateRelease.txt").getFile();
+              return new String(Files.readAllBytes(resource.toPath()));
+              }catch (IOException ex){
+                log.error("MessageFactory: IOException with type=[{}]",type,ex);
+                return null;
+              }
+    case 4:try{
+              File resource =
+                  new ClassPathResource("messageTemplates/notificationUpBuild.txt").getFile();
+              return new String(Files.readAllBytes(resource.toPath()));
+              }catch (IOException ex){
+                log.error("MessageFactory: IOException with type=[{}]",type,ex);
+                return null;
+              }
     default: return null;
     }
   }

@@ -1,7 +1,6 @@
 package com.allexey991.slack.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect
 public class MessageForSlack {
 
+  @JsonProperty
+  private int template;
   @JsonProperty
   private int actionType;
   @JsonProperty
@@ -19,6 +20,8 @@ public class MessageForSlack {
   private String ciProjectName;
   @JsonProperty
   private String ciPipelineUrl;
+  @JsonProperty
+  private String ciReleaseVersion;
 
 
   public MessageForSlack(){}
@@ -29,12 +32,6 @@ public class MessageForSlack {
 
   public String getCiPipeLineSource() {
     return ciPipeLineSource;
-  }
-
-  @Override public String toString() {
-    return "MessageForSlack{" + "actionType=" + actionType + ", ciJobName='" + ciJobName + '\''
-        + ", ciPipeLineSource='" + ciPipeLineSource + '\'' + ", ciProjectName='" + ciProjectName
-        + '\'' + ", ciPipelineUrl='" + ciPipelineUrl + '\'' + '}';
   }
 
   public String getCiProjectName() {
@@ -49,12 +46,26 @@ public class MessageForSlack {
     return ciPipelineUrl;
   }
 
-  public List getAllParameters(){
-    List result = new ArrayList();
-    result.add(ciJobName);
-    result.add(ciPipeLineSource);
-    result.add(ciProjectName);
-    result.add(ciPipelineUrl);
-    return  result;
+  public String getCiReleaseVersion() { return ciReleaseVersion; }
+
+  public int getTemplate() {
+    return template;
+  }
+
+  @Override public String toString() {
+    return "MessageForSlack{" + "template=" + template + ", actionType=" + actionType
+        + ", ciJobName='" + ciJobName + '\'' + ", ciPipeLineSource='" + ciPipeLineSource + '\''
+        + ", ciProjectName='" + ciProjectName + '\'' + ", ciPipelineUrl='" + ciPipelineUrl + '\''
+        + ", ciReleaseVersion='" + ciReleaseVersion + '\'' + '}';
+  }
+
+  public HashMap getAllParameters(){
+    HashMap<String,String> map = new HashMap<>();
+    map.put("ciJobName",ciJobName);
+    map.put("ciPipeLineSource",ciPipeLineSource);
+    map.put("ciProjectName",ciProjectName);
+    map.put("ciPipelineUrl",ciPipelineUrl);
+    map.put("ciReleaseVersion",ciReleaseVersion);
+    return  map;
   }
 }
