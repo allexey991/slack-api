@@ -9,10 +9,10 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/back-end/test/back-end-test.log</file>
+        <file>/var/log/slack-api/slack-api.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/var/log/back-end/test/logs/back-end-test-%d{yyyy-MM-dd}p%i.txt</fileNamePattern>
+            <fileNamePattern>/var/log/slack-api/archive/slack-api-%d{yyyy-MM-dd}p%i.txt</fileNamePattern>
             <!-- each file should be at most 10MB, keep 14 days worth of history, but at most 1GB -->
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>3</maxHistory>

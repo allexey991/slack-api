@@ -1,0 +1,10 @@
+{
+  "templateAndChannels":
+    {
+      "1":[],
+      "2":
+      [
+        "https://hooks.slack.com/services/key/example"
+      ]
+    }
+}

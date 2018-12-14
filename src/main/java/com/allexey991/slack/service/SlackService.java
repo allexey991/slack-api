@@ -2,9 +2,11 @@ package com.allexey991.slack.service;
 
 import javax.annotation.PostConstruct;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
-import com.allexey991.slack.dictionary.DictActionType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,66 +18,73 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.allexey991.slack.dictionary.DictErrorCode;
-import com.allexey991.slack.dictionary.DictObject;
 import com.allexey991.slack.model.MessageForSlack;
+import com.allexey991.slack.model.ChannelsMap;
 import com.allexey991.slack.model.SlackMessage;
-import com.allexey991.slack.util.MessageFactory;
+import com.allexey991.slack.util.ClassPathAccessor;
+import com.allexey991.slack.util.TemplateHelper;
 
 @Service
 public class SlackService {
   private static Logger log = LoggerFactory.getLogger(SlackService.class);
 
   @Autowired
-  DictObject dictObject;
-  @Autowired DictActionType dictActionType;
+  private TemplateHelper templateHelper;
   @Autowired
-  DictErrorCode dictErrorCode;
-  @Autowired
-  MessageFactory messageFactory;
+  private ClassPathAccessor classPathAccessor;
+  @Value("${slackUrl}")
+  private String slackDefaultUrl;
 
   private RestTemplate restTemplate;
-
-  @Value("${slackUrl:http://www.example.com}")
-  private String slackUrl;
 
   @PostConstruct
   private void init() {
     this.restTemplate = new RestTemplate();
   }
 
-  private String getSlackUrl() {
-    return slackUrl;
-  }
+  public void startSending(MessageForSlack messageForSlack) {
+    String templateConfigName = "templateChannels.json";
+    ChannelsMap channelsMap = null;
 
-  private void setSlackUrl(String slackUrl) {
-    this.slackUrl = slackUrl;
-  }
+    log.info("startSending: Start form message to Slack");
 
-  public void printSlackUrl(){
-    log.info("printSlackUrl: slackUrl=[{}]",getSlackUrl());
-  }
+    String textMessage = classPathAccessor.getFileContentByPattern(messageForSlack.getTemplate());
+    ObjectMapper mapper = new ObjectMapper();
 
-  public void sendToSlack(MessageForSlack messageForSlack) {
+    try {
+      channelsMap = mapper.readValue(
+          classPathAccessor.getFileContent(templateConfigName), ChannelsMap.class);
 
-    log.info("sendToSlack: Start form message to Slack");
+    }catch (IOException ex){
+      log.error("startSending: error with json=[{}]",templateConfigName,ex);
+    }
 
-    String textMessage = messageFactory.getMessageTemplate(messageForSlack.getActionType());
-    if (Objects.nonNull(textMessage)){
-      String.format(textMessage
-          ,dictActionType.getValue(messageForSlack.getActionType())
-          ,messageForSlack.getAllParameters());
-
-      HttpHeaders headers = new HttpHeaders();
-      headers.setContentType(MediaType.APPLICATION_JSON);
-      SlackMessage slackMessage = new SlackMessage(textMessage);
-      HttpEntity<SlackMessage> request = new HttpEntity<SlackMessage>(slackMessage, headers);
-
-      log.info("sendToSlack: ready message=[{}]",textMessage);
-      ResponseEntity<String> response = restTemplate.postForEntity(slackUrl, request, String.class);
-      log.info("sendToSlack: response=[{}]",response.getStatusCode());
+    if (Objects.nonNull(textMessage) && Objects.nonNull(channelsMap)){
+      List<String> urls = channelsMap.getUrlsByTemplateId(messageForSlack.getTemplate());
+      textMessage = templateHelper.replace(textMessage,messageForSlack);
+      if (urls.isEmpty()) {
+        log.warn("startSending: No specified channels, used default channel=[{}]",slackDefaultUrl);
+        sendToSlack(textMessage,slackDefaultUrl);
+      } else {
+        String finTextMessage = textMessage; //effectively final variable for lambda expression
+        urls.forEach(e -> sendToSlack(finTextMessage,e));
+      }
     }else{
-      log.error("sendToSlack: Sending Error");
+      log.error("startSending: null in objects=[templates={},Links{}]",textMessage,channelsMap);
     }
   }
+
+  private void sendToSlack(String textMessage,String slackUrl) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    SlackMessage slackMessage = new SlackMessage(textMessage);
+    HttpEntity<SlackMessage> request = new HttpEntity<>(slackMessage, headers);
+
+    log.info("startSending: ready message=[{}]",textMessage);
+    ResponseEntity<String> response
+        = restTemplate.postForEntity(slackUrl, request, String.class);
+    log.info("startSending: response=[{}]",response.getStatusCode());
+  }
+
+
 }

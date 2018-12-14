@@ -1,0 +1,4 @@
+/src/main/resources/slack-api.properties
+/.idea
+/slack-api.iml
+/*.iml
