@@ -8,17 +8,15 @@ import org.springframework.stereotype.Component;
 import com.allexey991.slack.dictionary.DictActionType;
 @Component
 public class TemplateHelper {
-  @Autowired DictActionType dictActionType;
+  @Autowired
+  private DictActionType dictActionType;
 
-  private final String ACTION_TYPE = "%actionType%";
-  private final String CI_JOB_NAME = "%ciJobName%";
-  private final String CI_PIPE_LINE_SOURCE = "%ciPipeLineSource%";
-  private final String CI_PIPE_LINE_URL = "%ciPipeLineUrl%";
-  private final String CI_PROJECT_NAME = "%ciProjectName%";
-  private final String CI_RELEASE_VERSION = "%ciReleaseVersion%";
-
-  public TemplateHelper() {
-  }
+  private static final String ACTION_TYPE = "%actionType%";
+  private static final String CI_JOB_NAME = "%ciJobName%";
+  private static final String CI_PIPE_LINE_SOURCE = "%ciPipeLineSource%";
+  private static final String CI_PIPE_LINE_URL = "%ciPipeLineUrl%";
+  private static final String CI_PROJECT_NAME = "%ciProjectName%";
+  private static final String CI_RELEASE_VERSION = "%ciReleaseVersion%";
 
   public String replace(String template, MessageForSlack messageForSlack){
     StringBuilder stringBuilder = new StringBuilder(template);

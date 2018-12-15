@@ -1,0 +1,11 @@
+{
+  "templateAndChannels":
+    {
+      "1":[],
+      "2":
+      [
+        "https://www.example1.com",
+        "https://www.example2.com"
+      ]
+    }
+}
