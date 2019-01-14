@@ -22,35 +22,33 @@ public class TemplateHelper {
     StringBuilder stringBuilder = new StringBuilder(template);
 
     if(template.contains(CI_JOB_NAME)){
-      stringBuilder.insert(replaceWordAndGetIndex(CI_JOB_NAME,stringBuilder)
-          ,messageForSlack.getCiJobName());
+      replaceText(stringBuilder,CI_JOB_NAME,messageForSlack.getCiJobName());
     }
     if(template.contains(CI_PIPE_LINE_SOURCE)){
-      stringBuilder.insert(replaceWordAndGetIndex(CI_PIPE_LINE_SOURCE,stringBuilder)
-          ,messageForSlack.getCiPipeLineSource());
+      replaceText(stringBuilder,CI_PIPE_LINE_SOURCE,messageForSlack.getCiPipeLineSource());
     }
     if(template.contains(CI_PIPE_LINE_URL)){
-      stringBuilder.insert(replaceWordAndGetIndex(CI_PIPE_LINE_URL,stringBuilder)
-          ,messageForSlack.getCiPipelineUrl());
+      replaceText(stringBuilder,CI_PIPE_LINE_URL,messageForSlack.getCiPipelineUrl());
     }
     if(template.contains(CI_PROJECT_NAME)) {
-      stringBuilder.insert(replaceWordAndGetIndex(CI_PROJECT_NAME,stringBuilder),
-          messageForSlack.getCiProjectName());
+      replaceText(stringBuilder,CI_PROJECT_NAME,messageForSlack.getCiProjectName());
     }
     if(template.contains(ACTION_TYPE)){
-      stringBuilder.insert(replaceWordAndGetIndex(ACTION_TYPE,stringBuilder)
-          ,dictActionType.DICTIONARY.get(messageForSlack.getActionType()));
+      replaceText(stringBuilder,ACTION_TYPE,dictActionType.DICTIONARY.get(messageForSlack.getActionType()));
     }
     if(template.contains(CI_RELEASE_VERSION)){
-      stringBuilder.insert(replaceWordAndGetIndex(CI_RELEASE_VERSION,stringBuilder)
-          ,messageForSlack.getCiReleaseVersion());
+      replaceText(stringBuilder,CI_RELEASE_VERSION,messageForSlack.getCiReleaseVersion());
     }
     return stringBuilder.toString();
   }
 
-  private int replaceWordAndGetIndex(String temaplateWord,StringBuilder stringBuilder){
-    int result = stringBuilder.indexOf(temaplateWord);
-    stringBuilder.delete(result,result+temaplateWord.length());
-    return  result;
+  private StringBuilder replaceText(StringBuilder originalString,String temaplateWord,String value){
+
+    while(originalString.indexOf(temaplateWord)>-1){
+      int indexOf = originalString.indexOf(temaplateWord);
+      originalString.delete(indexOf,indexOf+temaplateWord.length());
+      originalString.insert(indexOf,value);
+    }
+    return  originalString;
   }
 }

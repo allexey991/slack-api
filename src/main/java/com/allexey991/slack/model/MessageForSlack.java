@@ -26,6 +26,17 @@ public class MessageForSlack {
 
   public MessageForSlack(){}
 
+  public MessageForSlack(int template, int actionType, String ciJobName, String ciPipeLineSource,
+      String ciProjectName, String ciPipelineUrl, String ciReleaseVersion) {
+    this.template = template;
+    this.actionType = actionType;
+    this.ciJobName = ciJobName;
+    this.ciPipeLineSource = ciPipeLineSource;
+    this.ciProjectName = ciProjectName;
+    this.ciPipelineUrl = ciPipelineUrl;
+    this.ciReleaseVersion = ciReleaseVersion;
+  }
+
   public String getCiJobName() {
     return ciJobName;
   }

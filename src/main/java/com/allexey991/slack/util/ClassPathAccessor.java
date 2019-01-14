@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 public class ClassPathAccessor {
   private static Logger log = LoggerFactory.getLogger(ClassPathAccessor.class);
 
+  public ClassPathAccessor() {
+  }
+
   @Autowired
   private ApplicationContext applicationContext;
 
